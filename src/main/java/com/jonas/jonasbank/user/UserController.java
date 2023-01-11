@@ -1,9 +1,10 @@
 package com.jonas.jonasbank.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -14,12 +15,21 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService){
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public Optional<User> User (Integer id){
-        return userService.getUser(id);
+    @GetMapping
+    public Optional<User> getUser(String username){
+        Optional<User> user = userService.getUser("benny");
+        System.out.println(user);
+        return user;
     }
+
+    @PostMapping
+    public ResponseEntity<User> registerNewUser(@RequestBody User user){
+        userService.addNewUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
 }
