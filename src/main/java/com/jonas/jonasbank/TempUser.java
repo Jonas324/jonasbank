@@ -1,5 +1,6 @@
 package com.jonas.jonasbank;
 
+import com.jonas.jonasbank.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;
@@ -14,12 +15,10 @@ public class TempUser {
 
     @Bean
     public UserDetailsService userDetailsService(){
-
         UserDetails benny = User.withDefaultPasswordEncoder()
                 .username("benny")
                 .password("123")
                 .roles("ADMIN").build();
-
         return new InMemoryUserDetailsManager(benny);
 
     }

@@ -2,17 +2,23 @@ package com.jonas.jonasbank.user;
 
 import jakarta.persistence.*;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @Entity
 @Table(name = "BankUser")
-public class User implements UserDetails {
+public class User implements UserDetails  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -26,6 +32,7 @@ public class User implements UserDetails {
     private Boolean accountNonLocked;
     private boolean credentialsNonExpired;
 
+
     public Long getId() {
         return id;
     }
@@ -34,7 +41,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public User(String email, int credit, String username, String password, Boolean enabled) {
+    public User(String email,
+                int credit,
+                String username,
+                String password,
+                Boolean enabled,
+                Collection<? extends GrantedAuthority> authorities) {
         this.email = email;
         this.credit = credit;
         this.enabled=enabled;
@@ -43,9 +55,20 @@ public class User implements UserDetails {
         this.accountNonExpired=true;
         this.accountNonLocked=true;
         this.credentialsNonExpired=true;
+
+
+
     }
 
-    public User(String email, int credit, String password, String username, Boolean enabled, Boolean accountNonExpired, Boolean accountNonLocked, boolean credentialsNonExpired) {
+    public User(String email,
+                int credit,
+                String password,
+                String username,
+                Boolean enabled,
+                Boolean accountNonExpired,
+                Boolean accountNonLocked,
+                boolean credentialsNonExpired,
+                Collection<? extends GrantedAuthority> authorities) {
 
         this.email = email;
         this.credit = credit;
@@ -55,7 +78,17 @@ public class User implements UserDetails {
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
         this.credentialsNonExpired = credentialsNonExpired;
+
+
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return null;
+    }
+
+
 
     public User() {
 
@@ -75,11 +108,6 @@ public class User implements UserDetails {
 
     public void setCredit(int credit) {
         this.credit = credit;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
     }
 
     @Override
@@ -116,6 +144,8 @@ public class User implements UserDetails {
         this.credentialsNonExpired = credentialsNonExpired;
     }
 
+
+
     @Override
     public boolean isAccountNonExpired() {
         return accountNonExpired;
@@ -136,7 +166,21 @@ public class User implements UserDetails {
         return enabled;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public Boolean getAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    public Boolean getAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+
     public void eraseCredentials(){
         this.password=null;
     }
+
 }

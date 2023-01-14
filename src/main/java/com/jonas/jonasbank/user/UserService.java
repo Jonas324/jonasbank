@@ -1,34 +1,20 @@
 package com.jonas.jonasbank.user;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public interface UserService {
 
-    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    ResponseEntity<User> addNewUser(User user);
 
-    public void addNewUser(User user) {
-        Optional<User> userOptional = userRepository.findByName(user.getUsername());
-        if (userOptional.isPresent()){
-            throw new IllegalStateException("guestName taken");
-        }
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(user.getPassword());
-        newUser.setEmail(user.getEmail());
-        newUser.setCredit(1000);
-        userRepository.save(newUser);
-    }
+    ResponseEntity<List<User>> getUser(String username);
 
-    public Optional<User> getUser(String username) {
-
-        return userRepository.findByName(username);
-    }
+    void deleteUser(Long id);
 }
