@@ -1,20 +1,23 @@
 package com.jonas.jonasbank.transaction;
 
+import com.jonas.jonasbank.user.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
     private TransactionRepository transactionRepository;
+    private UserServiceImpl userService;
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository) {
+    public TransactionServiceImpl(TransactionRepository transactionRepository,
+                                  UserServiceImpl userService) {
         this.transactionRepository = transactionRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -26,6 +29,8 @@ public class TransactionServiceImpl implements TransactionService {
         newTransaction.setReceiverId(transaction.getReceiverId());
         newTransaction.setCredit(transaction.getCredit());
         transactionRepository.save(newTransaction);
+
+        userService.calculateCredit(transaction);
 
         return new ResponseEntity<>(transaction, HttpStatus.OK);
     }

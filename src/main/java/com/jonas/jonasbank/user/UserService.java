@@ -1,20 +1,21 @@
 package com.jonas.jonasbank.user;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
 
     ResponseEntity<User> addNewUser(User user);
 
-    ResponseEntity<List<User>> getUser(String username);
+    Optional<User> getUser(Long id);
+
+    ResponseEntity<List<User>> getAllUsers(String username);
 
     void deleteUser(Long id);
 }

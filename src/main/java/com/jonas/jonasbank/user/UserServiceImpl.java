@@ -1,7 +1,11 @@
 package com.jonas.jonasbank.user;
 
+import com.jonas.jonasbank.config.AppPasswordConfig;
+import com.jonas.jonasbank.transaction.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,11 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final AppPasswordConfig appPasswordConfig;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, AppPasswordConfig appPasswordConfig) {
         this.userRepository = userRepository;
+        this.appPasswordConfig = appPasswordConfig;
     }
 
     @Override
@@ -24,13 +30,8 @@ public class UserServiceImpl implements UserService{
         }
         User newUser = new User();
         newUser.setUsername(user.getUsername());
-        newUser.setPassword(user.getPassword());
-        newUser.setEmail(user.getEmail());
+        newUser.setPassword(appPasswordConfig.bCryptPasswordEncoder().encode(user.getPassword()));
         newUser.setCredit(user.getCredit());
-        newUser.setEnabled(user.isEnabled());
-        newUser.setAccountNonExpired(user.isAccountNonExpired());
-        newUser.setCredentialsNonExpired(user.isCredentialsNonExpired());
-        newUser.setAccountNonLocked(user.isAccountNonLocked());
 
         userRepository.save(newUser);
 
@@ -38,7 +39,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<List<User>> getUser(String username) {
+    public Optional<User> getUser(Long id){
+        Optional<User> user = userRepository.findById(id);
+        return user;
+    }
+    @Override
+    public ResponseEntity<List<User>> getAllUsers(String username) {
         try {
             List<User> userList = new ArrayList<>(userRepository.findAll());
 
@@ -55,5 +61,36 @@ public class UserServiceImpl implements UserService{
             throw new IllegalStateException("user with id" + Id + "does not exists");
         }
         userRepository.deleteById(Id);
+    }
+
+    public void calculateCredit(Transaction transaction){
+
+        Long userSendId = transaction.getSenderId();
+        Long userReceiveId = transaction.getReceiverId();
+        int credit = transaction.getCredit();
+
+        Optional<User> _userSend =  userRepository.findById(userSendId);
+        Optional<User> _userReceive = userRepository.findById(userReceiveId);
+        User userS = _userSend.get();
+        User userR = _userReceive.get();
+
+        int userSCredit = userS.getCredit();
+        int userRCredit = userR.getCredit();
+
+        int userSUpdatedCredit = userSCredit - credit;
+        int userRUpdatedCredit = userRCredit + credit;
+
+        userS.setCredit(userSUpdatedCredit);
+        userR.setCredit(userRUpdatedCredit);
+
+        userRepository.save(userS);
+        userRepository.save(userR);
+
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);    // Query
+
     }
 }

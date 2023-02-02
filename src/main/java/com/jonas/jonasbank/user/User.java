@@ -1,105 +1,113 @@
 package com.jonas.jonasbank.user;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-@Configuration
-@EnableWebSecurity
+@Data
+@Builder
+@AllArgsConstructor
 @Entity
-@Table(name = "BankUser")
-public class User implements UserDetails  {
+@Table(name="BankUser")
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
-    private String email;
-    private String password;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(name = "Id", nullable = false)
+    private Long userId;
+
+    @Column
     private String username;
+    @Column
+    private String password;
+    @Column
     private int credit;
-    private Boolean enabled;
-    private Boolean accountNonExpired;
-    private Boolean accountNonLocked;
-    private boolean credentialsNonExpired;
-
-
-    public Long getId() {
-        return id;
+    @Column
+    private Boolean isAccountNonExpired;
+    @Column
+    private Boolean isAccountNonLocked;
+    @Column
+    private Boolean isCredentialsNonExpired;
+    @Column
+    private Boolean isEnabled;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    public User() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User(String email,
-                int credit,
-                String username,
+    public User(String username,
                 String password,
-                Boolean enabled,
-                Collection<? extends GrantedAuthority> authorities) {
-        this.email = email;
-        this.credit = credit;
-        this.enabled=enabled;
-        this.username=username;
-        this.password=password;
-        this.accountNonExpired=true;
-        this.accountNonLocked=true;
-        this.credentialsNonExpired=true;
-
-
-
-    }
-
-    public User(String email,
                 int credit,
-                String password,
-                String username,
-                Boolean enabled,
-                Boolean accountNonExpired,
-                Boolean accountNonLocked,
-                boolean credentialsNonExpired,
-                Collection<? extends GrantedAuthority> authorities) {
-
-        this.email = email;
-        this.credit = credit;
-        this.password = password;
+                Role role) {
         this.username = username;
-        this.enabled = enabled;
-        this.accountNonExpired = accountNonExpired;
-        this.accountNonLocked = accountNonLocked;
-        this.credentialsNonExpired = credentialsNonExpired;
+        this.password = password;
+        this.credit = credit;
+        this.role = role;
+    }
 
+    public Long getUserId() {
+        return userId;
+    }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<SimpleGrantedAuthority> convertedSet;
 
-        return null;
+        convertedSet = Collections.singleton(new SimpleGrantedAuthority(role.toString()));
+
+        return convertedSet;
     }
 
 
-
-    public User() {
-
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getCredit() {
@@ -110,77 +118,28 @@ public class User implements UserDetails  {
         this.credit = credit;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
+    public Role getRole() {
+        return role;
     }
 
-    public void setPassword(String password){
-        this.password = password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public void setAccountNonExpired(Boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
+        isAccountNonExpired = accountNonExpired;
     }
 
     public void setAccountNonLocked(Boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
+        isAccountNonLocked = accountNonLocked;
     }
 
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
+    public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
     }
 
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public Boolean getAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    public Boolean getAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-
-    public void eraseCredentials(){
-        this.password=null;
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
     }
 
 }
