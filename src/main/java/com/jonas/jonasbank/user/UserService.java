@@ -11,11 +11,10 @@ import java.util.Optional;
 public interface UserService extends UserDetailsService {
 
 
-    ResponseEntity<User> addNewUser(User user);
 
     Optional<User> getUser(Long id);
 
-    ResponseEntity<List<User>> getAllUsers(String username);
+    ResponseEntity<List<User>> getAllUsers();
 
     void deleteUser(Long id);
 }

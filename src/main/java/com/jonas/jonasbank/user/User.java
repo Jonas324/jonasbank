@@ -1,9 +1,6 @@
 package com.jonas.jonasbank.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,9 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
 @Entity
 @Table(name="BankUser")
 public class User implements UserDetails {
@@ -23,7 +17,6 @@ public class User implements UserDetails {
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name = "Id", nullable = false)
     private Long userId;
-
     @Column
     private String username;
     @Column

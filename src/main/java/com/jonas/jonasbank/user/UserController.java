@@ -45,9 +45,9 @@ public class UserController {
     }
 
     @CrossOrigin
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(String username){
-        return userService.getAllUsers(username);
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return userService.getAllUsers();
     }
 
     @CrossOrigin
@@ -81,14 +81,6 @@ public class UserController {
         // model.addAttribute("user", userModel);
 
         return "user registered";
-    }
-
-    @CrossOrigin
-    @PostMapping
-    public ResponseEntity<User> addNewUser(@RequestBody User user, BindingResult result, Model model){
-        // Postman -- {  "password" : "123", "username" : "benny", "credit" : "1000", "enabled" : "true", "accountNonExpired" : "true", "accountNonLocked" : "true", "credentialsNonExpired" : "true","role":"ADMIN"}
-        userService.addNewUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @CrossOrigin

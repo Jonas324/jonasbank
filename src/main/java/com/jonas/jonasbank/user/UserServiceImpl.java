@@ -23,30 +23,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<User> addNewUser(User user) {
-        Optional<User> userOptional = userRepository.findByName(user.getUsername());
-        if (userOptional.isPresent()){
-            throw new IllegalStateException("username taken");
-        }
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(appPasswordConfig.bCryptPasswordEncoder().encode(user.getPassword()));
-        newUser.setCredit(user.getCredit());
-
-        userRepository.save(newUser);
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @Override
     public Optional<User> getUser(Long id){
         Optional<User> user = userRepository.findById(id);
         return user;
     }
     @Override
-    public ResponseEntity<List<User>> getAllUsers(String username) {
+    public ResponseEntity<List<User>> getAllUsers() {
         try {
-            List<User> userList = new ArrayList<>(userRepository.findAll());
+            List<User> userList = new ArrayList<>();
+            userList.addAll(userRepository.findAll());
 
             return new ResponseEntity<>(userList, HttpStatus.OK);
 
