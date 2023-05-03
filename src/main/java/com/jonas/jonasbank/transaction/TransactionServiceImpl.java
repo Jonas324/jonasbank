@@ -23,6 +23,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public ResponseEntity<Transaction> newPayment(Transaction transaction) {
 
+        if(transaction.getCredit() < 0) {
+            return new ResponseEntity<>(transaction, HttpStatus.BAD_REQUEST);
+        }
+
         Transaction newTransaction = new Transaction();
 
         newTransaction.setSenderId(transaction.getSenderId());

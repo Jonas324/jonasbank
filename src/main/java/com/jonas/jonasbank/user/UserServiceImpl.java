@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
 
     public void calculateCredit(Transaction transaction){
 
+
         Long userSendId = transaction.getSenderId();
         Long userReceiveId = transaction.getReceiverId();
         int credit = transaction.getCredit();
