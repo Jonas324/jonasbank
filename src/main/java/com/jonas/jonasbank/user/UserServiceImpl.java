@@ -48,6 +48,18 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(Id);
     }
 
+    @Override
+    public void updateUser(Long id, User updatedUser) {
+
+            Optional<User> existingUser = userRepository.findById(id);
+            User eUser = existingUser.get();
+            eUser.setUsername(updatedUser.getUsername());
+            // update other fields as needed
+            userRepository.save(eUser);
+
+
+    }
+
     public void calculateCredit(Transaction transaction){
 
 
@@ -71,7 +83,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(userS);
         userRepository.save(userR);
-
     }
 
     @Override

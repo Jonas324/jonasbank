@@ -10,11 +10,11 @@ import java.util.Optional;
 @Service
 public interface UserService extends UserDetailsService {
 
-
-
     Optional<User> getUser(Long id);
 
     ResponseEntity<List<User>> getAllUsers();
 
     void deleteUser(Long id);
+
+    void updateUser(Long id, User user);
 }

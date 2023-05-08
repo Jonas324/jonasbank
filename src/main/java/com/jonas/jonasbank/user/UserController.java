@@ -38,6 +38,12 @@ public class UserController {
     }
 
     @CrossOrigin
+    @PutMapping("/updateUser/{id}")
+    public void updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        userService.updateUser(id, updatedUser);
+    }
+
+    @CrossOrigin
     @GetMapping("/adminPage")
     @PreAuthorize("hasRole('ADMIN')")
     public String adminPage(){
